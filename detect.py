@@ -137,6 +137,8 @@ def detect(save_img=False):
                     s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
 
                 # Write results
+                # modify json format
+                metaData = {"annotation": {"point": {"type": "point", "location":[],"label": "ball"}}}
                 for *xyxy, conf, cls in reversed(det):
                     label = f'{names[int(cls)]} {conf:.2f}'
                     if save_txt: # Write to file
