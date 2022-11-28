@@ -139,18 +139,18 @@ def detect(save_img=False):
                 # Write results
                 for *xyxy, conf, cls in reversed(det):
                     label = f'{names[int(cls)]} {conf:.2f}'
-                    if save_txt:  # Write to file
-                        xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
-                        line = (cls, *xywh, conf) if opt.save_conf else (cls, *xywh)  # label format
-                        print(*xyxy,"tensor", conf,"?", xywh, "txt", *xywh)
-
+                    if save_txt: # Write to file
+                        X = ((xyxy[0]+xyxy[2])/2)
+                        Y = ((xyxy[1]+xyxy[3])/2)
+                        metaData['annotation']["point"]["location"].append({"x":"%.1f" %X,"y":"%.1f" %Y}) 
                         with open(txt_path + '.json', "w", encoding="UTF-8") as json_file:
-                            json_file.write(json.dumps(('%g ' * len(line)).rstrip() % line + '\n'))
+                            json_file.write(json.dumps(metaData, indent=3, ensure_ascii=False))
+
 
                     if save_img or view_img:  # Add bbox to image
                         label = f'{names[int(cls)]} {conf:.2f}'
                         plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=1)
-                        cv2.circle(im0, (int((xyxy[0]+xyxy[2])/2), int((xyxy[1]+xyxy[3])/2)), 3, colors[int(cls)], thickness=-1) #중심점
+                        cv2.circle(im0, (int((xyxy[0]+xyxy[2])/2), int((xyxy[1]+xyxy[3])/2)), 3, colors[int(cls)], thickness=-1, lineType=cv2.LINE_AA) #중심점
                         
             # Print time (inference + NMS)
             print(f'{s}Done. ({(1E3 * (t2 - t1)):.1f}ms) Inference, ({(1E3 * (t3 - t2)):.1f}ms) NMS')
